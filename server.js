@@ -1,18 +1,18 @@
 var app = require('http').createServer(handler)
 //var io = require('socket.io')(app);
 //var fs = require('fs');
-var url = require('url');
+//var url = require('url');
 
-var sockets_array=[];
+//var sockets_array=[];
 
 
-app.listen(80);
+app.listen(process.env.PORT || 1337);
 
 
 function handler (req, res) {
 
 
-var query =url.parse(req.url, true).query;
+//var query =url.parse(req.url, true).query;
 /*
 if((typeof (query.id) != 'undefined') &&  (typeof (query.message) != 'undefined') && (typeof(sockets_array[query.id]) != 'undefined')){
      sockets_array[query.id].emit(query.message, query);
