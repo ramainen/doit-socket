@@ -1,12 +1,12 @@
 var app = require('http').createServer(handler)
 //var io = require('socket.io')(app);
-var fs = require('fs');
-var url = require('url');
+//var fs = require('fs');
+//var url = require('url');
 
 var sockets_array=[];
 
 
-app.listen(32800);
+app.listen(80);
 
 
 function handler (req, res) {
