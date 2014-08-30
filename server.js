@@ -6,7 +6,7 @@ var app = require('http').createServer(handler)
 var sockets_array=[];
 
 
-app.listen(80);
+app.listen(process.env.PORT || 1337);
 
 
 function handler (req, res) {
