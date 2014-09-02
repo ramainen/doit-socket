@@ -69,6 +69,6 @@ io.on('connection', function (socket) {
 	});
 	socket.on('disconnect', function () {
 		//disconnect
-		//delete sockets_array[socket._server_userid];
+		delete sockets_array[socket._server_userid];
 	})
 });
