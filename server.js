@@ -65,7 +65,7 @@ app.post('/emit', function (req, res) {
 io.on('connection', function (socket) {
 	socket.on('register', function (data) {
 		sockets_array[data.userid] = socket;
-		//socket._server_userid = data.userid;
+		socket._server_userid = data.userid;
 	});
 	socket.on('disconnect', function () {
 		//disconnect
