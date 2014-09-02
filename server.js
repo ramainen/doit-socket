@@ -24,14 +24,16 @@ app.get('/emit', function (req, res) {
 		res.end("OK");
 		var query_message = query.message;
 		var query_id = query.id;
-		
-		
+
 		query.id = undefined;
 		query.message = undefined;
 		if ((typeof (query._type) != 'undefined') && (typeof (query._data) != 'undefined') && (query._type == 'string')){
 			query = query._data;
 		}
-		sockets_array[query_id].emit(query_message, query);
+		for(key in sockets_array[query_id]){
+			sockets_array[query_id][key].emit(query_message, query);
+		}
+		
 		
 	}else{
 		res.end("ERROR");
@@ -41,8 +43,6 @@ app.get('/emit', function (req, res) {
 
 app.post('/emit', function (req, res) {
 	res.writeHead(200);
-	
-	
 	if((typeof (req.param('id')) != 'undefined') && (typeof (req.param('message')) != 'undefined') && (typeof(sockets_array[req.param('id')]) != 'undefined')){
 		
 		res.end("OK");
@@ -53,22 +53,30 @@ app.post('/emit', function (req, res) {
 		}else{
 			query = JSON.parse(req.param('data'));
 		}
-		sockets_array[query_id].emit(query_message, query);
-		
+		for(key in sockets_array[query_id]){
+			sockets_array[query_id][key].emit(query_message, query);
+		}
 	}else{
 		res.end("ERROR");
 	}
 	
 });
-
+console.log('start');
 
 io.on('connection', function (socket) {
 	socket.on('register', function (data) {
-		sockets_array[data.userid] = socket;
+		//connect
+		if(typeof(sockets_array[data.userid])=='undefined'){
+			sockets_array[data.userid]={};
+		}
 		socket._server_userid = data.userid;
+		sockets_array[data.userid][socket.id] = socket;
 	});
 	socket.on('disconnect', function () {
 		//disconnect
-		delete sockets_array[socket._server_userid];
+		delete sockets_array[socket._server_userid][socket.id];
+		if(Object.keys(sockets_array[socket._server_userid]).length == 0){
+			delete sockets_array[socket._server_userid];
+		}
 	})
 });
