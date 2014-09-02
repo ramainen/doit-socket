@@ -43,25 +43,39 @@ app.get('/emit', function (req, res) {
 
 app.post('/emit', function (req, res) {
 	res.writeHead(200);
-	if((typeof (req.param('id')) != 'undefined') && (typeof (req.param('message')) != 'undefined') && (typeof(sockets_array[req.param('id')]) != 'undefined')){
-		
-		res.end("OK");
-		var query_message = req.param('message');
-		var query_id = req.param('id');
-		if(typeof(req.param('data'))=='undefined'){
-			query = {};
+	if((typeof (req.param('id')) != 'undefined') && (typeof (req.param('message')) != 'undefined')) {
+		var clients = [];
+		if(typeof(req.param('id'))=='object'){
+			clients = req.param('id');
 		}else{
-			query = JSON.parse(req.param('data'));
+			clients = [req.param('id')];
 		}
-		for(key in sockets_array[query_id]){
-			sockets_array[query_id][key].emit(query_message, query);
+		var all_ok = false;
+		for (client_key in clients){
+			if(typeof(sockets_array[clients[client_key]]) != 'undefined'){
+				all_ok=true;
+				var query_message = req.param('message');
+				var query_id = clients[client_key];
+				if(typeof(req.param('data'))=='undefined'){
+					query = {};
+				}else{
+					query = JSON.parse(req.param('data'));
+				}
+				for(key in sockets_array[query_id]){
+					sockets_array[query_id][key].emit(query_message, query);
+				}
+			}
+		}
+		if(all_ok){
+			res.end("OK");
+		}else{
+			res.end("ERROR");
 		}
 	}else{
 		res.end("ERROR");
 	}
 	
 });
-console.log('start');
 
 io.on('connection', function (socket) {
 	socket.on('register', function (data) {
@@ -74,9 +88,11 @@ io.on('connection', function (socket) {
 	});
 	socket.on('disconnect', function () {
 		//disconnect
-		delete sockets_array[socket._server_userid][socket.id];
-		if(Object.keys(sockets_array[socket._server_userid]).length == 0){
-			delete sockets_array[socket._server_userid];
+		if(typeof(socket._server_userid)!='undefined'){ //На случай слишком быстрого дисконнекта
+			delete sockets_array[socket._server_userid][socket.id];
+			if(Object.keys(sockets_array[socket._server_userid]).length == 0){
+				delete sockets_array[socket._server_userid];
+			}
 		}
 	})
 });
