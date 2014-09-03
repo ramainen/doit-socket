@@ -64,17 +64,11 @@ app.post('/emit', function (req, res) {
 				}else{
 					query = JSON.parse(req.param('data'));
 				}
-				/*
-				for(key in sockets_array[query_id]){
-					sockets_array[query_id][key].emit(query_message, query);
-				}
-				*/
-//				console.log(clients[client_key])
 				io.to(clients[client_key]).emit(query_message, query);
 			//}
 		}
 		if(all_ok){
-			res.end("OK");
+			res.end("OK" + typeof(io.sockets.adapter.rooms[clients[client_key]]));
 		}else{
 			res.end("ERROR");
 		}
@@ -83,47 +77,13 @@ app.post('/emit', function (req, res) {
 	}
 	
 });
-/*
-io.on('connection', function (socket) {
-	socket.on('register', function (data) {
-		//connect
-		if(typeof(sockets_array[data.userid])=='undefined'){
-			sockets_array[data.userid]={};
-		}
-		socket._server_userid = data.userid;
-		sockets_array[data.userid][socket.id] = socket;
-	});
-	socket.on('disconnect', function () {
-		//disconnect
-		if(typeof(socket._server_userid)!='undefined'){ //На случай слишком быстрого дисконнекта
-			delete sockets_array[socket._server_userid][socket.id];
-			if(Object.keys(sockets_array[socket._server_userid]).length == 0){
-				delete sockets_array[socket._server_userid];
-			}
-		}
-	})
-});
-*/
+
+
 io.on('connection', function (socket) {
 	socket.on('register', function (data) {
 		//connect
 		if(typeof(data.userid)!='undefined'){
-//			console.log('join' + data.userid);
 			socket.join(data.userid);
 		}
-		/*if(typeof(sockets_array[data.userid])=='undefined'){
-			sockets_array[data.userid]={};
-		}
-		socket._server_userid = data.userid;
-		sockets_array[data.userid][socket.id] = socket;*/
 	});
-	/*socket.on('disconnect', function () {
-		//disconnect
-		if(typeof(socket._server_userid)!='undefined'){ //На случай слишком быстрого дисконнекта
-			delete sockets_array[socket._server_userid][socket.id];
-			if(Object.keys(sockets_array[socket._server_userid]).length == 0){
-				delete sockets_array[socket._server_userid];
-			}
-		}
-	})*/
 });
