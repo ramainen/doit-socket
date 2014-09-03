@@ -65,10 +65,15 @@ app.post('/emit', function (req, res) {
 					query = JSON.parse(req.param('data'));
 				}
 				io.to(clients[client_key]).emit(query_message, query);
+				
+				res.write(typeof(io.sockets.adapter.rooms[clients[client_key]]));
+				if(typeof(io.sockets.adapter.rooms[clients[client_key]])!='undefined'){
+					res.write (Object.keys(io.sockets.adapter.rooms[clients[client_key]]).length);
+				}
 			//}
 		}
 		if(all_ok){
-			res.end("OK" + typeof(io.sockets.adapter.rooms[clients[client_key]]));
+			res.end("OK");
 		}else{
 			res.end("ERROR");
 		}
