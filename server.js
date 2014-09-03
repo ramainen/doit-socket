@@ -16,6 +16,11 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+app.get('/stat/all', function (req, res) {
+	res.writeHead(200);
+	res.end("" + Object.keys(io.sockets.adapter.rooms).length + "");
+})
+
 app.get('/emit', function (req, res) {
 	var query = url.parse(req.url, true).query;
 	res.writeHead(200);
@@ -91,5 +96,8 @@ io.on('connection', function (socket) {
 		if(typeof(data.userid)!='undefined'){
 			socket.join(data.userid);
 		}
+		
 	});
 });
+
+ 
