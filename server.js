@@ -63,23 +63,19 @@ app.post('/emit', function (req, res) {
 		var all_ok = false;
 //		console.log('emit')
 		for (client_key in clients){
-			//if(typeof(sockets_array[clients[client_key]]) != 'undefined'){
+
+			var query_message = req.param('message');
+			var query_id = clients[client_key];
+			if((typeof(io.sockets.adapter.rooms[query_id])!='undefined') && (Object.keys(io.sockets.adapter.rooms[query_id]).length != 0)){
 				all_ok=true;
-				var query_message = req.param('message');
-				var query_id = clients[client_key];
-				if(typeof(req.param('data'))=='undefined'){
-					query = {};
-				}else{
-					query = JSON.parse(req.param('data'));
-				}
-				io.to(clients[client_key]).emit(query_message, query);
-/*				
-				res.write(typeof(io.sockets.adapter.rooms[clients[client_key]]));
-				if(typeof(io.sockets.adapter.rooms[clients[client_key]])!='undefined'){
-					res.write (Object.keys(io.sockets.adapter.rooms[clients[client_key]]).length);
-				}
-*/				
-			//}
+			}
+			if(typeof(req.param('data'))=='undefined'){
+				query = {};
+			}else{
+				query = JSON.parse(req.param('data'));
+			}
+			io.to(clients[client_key]).emit(query_message, query);
+
 		}
 		if(all_ok){
 			res.end("OK");
@@ -97,10 +93,24 @@ io.on('connection', function (socket) {
 	socket.on('register', function (data) {
 		//connect
 		if(typeof(data.userid)!='undefined'){
+			if(typeof(socket._userid)=='undefined'){
+				socket._userid = [];
+			}
+			socket._userid.push(data.userid);
 			socket.join(data.userid);
 		}
 		
 	});
+	socket.on('disconnect', function() {
+		if(typeof(socket._userid) != 'undefined'){
+			for(key in socket._userid){
+				//Socket.io fix
+				if(Object.keys(io.sockets.adapter.rooms[socket._userid[key]]).length == 0){
+					delete io.sockets.adapter.rooms[socket._userid[key]];
+				}
+			}
+		}
+		delete io.sockets.adapter.rooms[socket.id];
+	});
 });
 
- 
