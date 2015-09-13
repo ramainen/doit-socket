@@ -16,7 +16,8 @@ app.get('/favicon.ico', function (req, res) {
 });
 
 app.use(bodyParser.urlencoded({
-  extended: true
+  extended: true,
+  limit: '50mb'
 }));
 
 app.get('/stat/all', function (req, res) {
