@@ -148,7 +148,9 @@ app.post('/processcss', function (req, res) {
 	 .then(function (result) {
 		
 		res.end(result.css);
-	});
+	}).catch(function (error) {
+		res.end('ERROR: '+error.message);
+	});;
 
 
 	
