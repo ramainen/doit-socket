@@ -3,6 +3,22 @@
     "dependencies": {
       "socket.io": "~1.0.6",
 	  "express": "~4.8.7",
-	  "body-parser": "~1.6"
+	  "body-parser": "~1.6",
+	  
+	  "es6-promise": "~3.0.2",
+	  
+	  "postcss": "~5.0.5",
+	  "autoprefixer": "~6.0.2",
+	  "cssnano": "~3.0.1",
+	  "postcss-alias": "~0.2.2",
+	  "postcss-center": "~1.0.0",
+	  "postcss-simple-vars": "~1.0.0",
+	  "postcss-nested": "~1.0.0",
+	  "postcss-mixins": "~1.0.0",
+	  "postcss-use": "~2.0.0",
+	  "postcss-media-minmax": "~2.1.0"
+	  
+	  
+	  
   }
 }

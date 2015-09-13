@@ -114,3 +114,43 @@ io.on('connection', function (socket) {
 	});
 });
 
+/* second part - css postprocessor for Doit CMS */
+
+require('es6-promise').polyfill();
+var postcss = require('postcss');
+
+var plugins = [ 
+	
+	//require('precss')({ /* options */ }),
+	require('postcss-media-minmax')({ /* options */ }),
+	require('autoprefixer')({ /* options */ }),
+	require('postcss-center')({ /* options */ }),
+	require('postcss-simple-vars')({ /* options */ }),
+	require('postcss-nested')({ /* options */ }),
+	require('postcss-mixins')({ /* options */ }),
+	require('postcss-alias')({ /* options */ }),
+	require('postcss-use')({  modules: ['autoprefixer', 'cssnano', 'postcss-center', 'postcss-simple-vars', 'postcss-nested', 'postcss-mixins', 'postcss-alias'] }),
+	
+	
+	require('cssnano')()
+
+];
+
+app.post('/processcss', function (req, res) {
+	console.log('postprocessing...')
+	
+	
+	
+	res.writeHead(200);
+	
+	postcss(plugins).process(req.body.data)
+	
+	 .then(function (result) {
+		
+		res.end(result.css);
+	});
+
+
+	
+
+});
